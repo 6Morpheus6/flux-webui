@@ -10,6 +10,10 @@ from PIL import Image
 import json
 import devicetorch
 import os
+import warnings
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 class QuantizedFluxTransformer2DModel(QuantizedDiffusersModel):
     base_class = FluxTransformer2DModel
 dtype = torch.bfloat16
@@ -99,7 +103,7 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, guidan
     saved_paths = save_images(images) #save the images into the output folder
     return images, seed, saved_paths    
     
-def update_slider(checkpoint, num_inference_steps):
+def update_slider(checkpoint):
     if checkpoint == "sayakpaul/FLUX.1-merged":
         return 8
     else:

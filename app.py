@@ -7,12 +7,30 @@ from transformers import T5EncoderModel, CLIPTextModel
 from optimum.quanto import QuantizedDiffusersModel, QuantizedTransformersModel
 from datetime import datetime
 from PIL import Image
+from pathlib import Path
 import json
 import devicetorch
 import os
 import warnings
+import base64
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+def get_base64_image(image_path):
+    try:
+        img_file = Path(image_path)
+        if img_file.exists():
+            with open(img_file, "rb") as f:
+                encoded_string = base64.b64encode(f.read()).decode()
+            return f"data:image/png;base64,{encoded_string}"
+        else:
+            print(f"Warnung: {image_path} nicht gefunden.")
+            return ""
+    except Exception as e:
+        print(f"Fehler beim Laden des Icons: {e}")
+        return ""
+
+icon_base64 = get_base64_image("icon.png")
 
 class QuantizedFluxTransformer2DModel(QuantizedDiffusersModel):
     base_class = FluxTransformer2DModel
@@ -101,7 +119,7 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, guidan
     devicetorch.empty_cache(torch)
     print(f"emptied cache")
     saved_paths = save_images(images) #save the images into the output folder
-    return images, seed, saved_paths    
+    return images, seed   
     
 def update_slider(checkpoint):
     if checkpoint == "sayakpaul/FLUX.1-merged":
@@ -110,7 +128,7 @@ def update_slider(checkpoint):
         return 4
 with gr.Blocks(css=css) as demo:
     with gr.Column(elem_id="col-container"):
-        gr.HTML("<nav><img id='logo' src='file/icon.png'/></nav>")
+        gr.HTML(f"<nav><img id='logo' src='{icon_base64}'/></nav>")
         with gr.Row():
             prompt = gr.Text(
                 label="Prompt",

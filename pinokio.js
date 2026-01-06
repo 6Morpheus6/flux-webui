@@ -78,6 +78,10 @@ module.exports = {
           text: "Install",
           href: "install.js",
         }, {
+          icon: "fa-regular fa-circle-xmark",
+          text: "Empty cache",
+          href: "clearcache.js",
+        },{
           icon: "fa-solid fa-file-zipper",
           text: "<div><strong>Save Disk Space</strong><div>Deduplicates redundant library files</div></div>",
           href: "link.js",
